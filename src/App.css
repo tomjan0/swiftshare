@@ -1,38 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap');
+
 .App {
-  text-align: center;
-}
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: "Amatic SC", cursive;
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+    --blue-100: #EBF8FF;
+    --blue-200: #BEE3F8;
+    --blue-300: #90CDF4;
+    --blue-400: #63B3ED;
+    --blue-500: #4299E1;
+    --blue-600: #3182CE;
 }
 
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: calc(10px + 2vmin);
+    color: #63b3ed;
+
+    margin-bottom: calc(20px + 2vmin);
 }
 
-.App-link {
-  color: #61dafb;
+.App-header > h1, p {
+    margin: 0.1em
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.App > main {
+    width: 100%;
+    max-width: 1200px;
 }
+
+.styledDrop {
+    border: 4px dashed var(--blue-200);
+    border-radius: 6px;
+    padding: 2em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: var(--blue-400);
+    height: 20em;
+}
+
+.styledDrop:hover {
+    cursor: pointer;
+    border-color: var(--blue-300);
+    color: var(--blue-500);
+}
+
+.styledDrop[drag=true] {
+    border-color: var(--blue-400);
+}
+
+.styledDrop[drag=true] > p {
+    font-size: calc(20px + 2vmin);
+}
+
+.styledDrop > p {
+    line-height: 2em;
+    font-size: calc(10px + 2vmin);
+}
+
+.filelist {
+    list-style: none;
+}
+
