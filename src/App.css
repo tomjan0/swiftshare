@@ -1,19 +1,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap');
 
+
 .App {
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-family: "Amatic SC", cursive;
-
-
     --blue-100: #EBF8FF;
     --blue-200: #BEE3F8;
     --blue-300: #90CDF4;
     --blue-400: #63B3ED;
     --blue-500: #4299E1;
     --blue-600: #3182CE;
+
+    --gray-100: #f7fafc;
+    --gray-200: #edf2f7;
+
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: "Amatic SC", cursive;
+    font-size: calc(10px + 1vmin);
+    background-color: var(--gray-100);
+    min-height: 100vh;
 }
 
 .App-header {
@@ -66,7 +72,33 @@
     font-size: calc(10px + 2vmin);
 }
 
-.filelist {
+.file-list {
+    font-weight: bold;
     list-style: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-inline-start: 0;
+    padding-inline-end: 0;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
+    margin-block-start: 0;
+    margin-block-end: 0;
+    padding: 2em 10%
 }
+
+.file-list > li {
+    text-align: start;
+    padding: .5em 1em;
+    display: flex;
+    flex-grow: 1;
+    background-color: white;
+    border-radius: 6px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.file-list > li:not(:last-child) {
+    margin-bottom: 1em;
+}
+
 

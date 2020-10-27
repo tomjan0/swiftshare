@@ -53,7 +53,7 @@ function App() {
             <main>
                 <section>
                     <StyledDropzone files={files} setFiles={setFiles}/>
-                    <ul className="filelist">
+                    <ul className="file-list">
                         {files.map(file =>
                             <li key={file.name + file.size}>{file.name}</li>
                         )}
