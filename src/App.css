@@ -12,6 +12,10 @@
     --gray-100: #f7fafc;
     --gray-200: #edf2f7;
 
+    --red-300: #feb2b2;
+    --red-400: #fc8181;
+    --red-500: #f56565;
+
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -27,7 +31,7 @@
     flex-direction: column;
     align-items: center;
     font-size: calc(10px + 2vmin);
-    color: #63b3ed;
+    color: var(--blue-400);
 
     margin-bottom: calc(20px + 2vmin);
 }
@@ -37,7 +41,7 @@
 }
 
 .App > main {
-    width: 100%;
+    width: 90%;
     max-width: 1200px;
 }
 
@@ -73,8 +77,9 @@
 }
 
 .file-list {
-    font-weight: bold;
+    font-family: Roboto, sans-serif;
     list-style: none;
+    font-size: .9em;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -89,16 +94,42 @@
 
 .file-list > li {
     text-align: start;
-    padding: .5em 1em;
     display: flex;
-    flex-grow: 1;
-    background-color: white;
-    border-radius: 6px;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+
 }
 
 .file-list > li:not(:last-child) {
     margin-bottom: 1em;
 }
 
+.file-list > li > .left, .file-list > li > .right {
+    border-radius: 6px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    padding: 1em;
+    display: flex;
+    align-items: center;
+}
+
+.file-list > li > .left {
+    display: flex;
+    flex-grow: 1;
+    word-break: break-all;
+    justify-content: flex-start;
+}
+
+.file-list > li > .right {
+    color: white;
+    background-color: var(--red-500);
+    margin-left: 1em;
+    flex-shrink: 0;
+    justify-content: center;
+}
+
+.file-list > li > .right:hover {
+    background-color: var(--red-400);
+    cursor: pointer;
+}
 
