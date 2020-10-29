@@ -60,16 +60,16 @@ function App() {
         )
     }
 
-    // const parseSize = size => {
-    //     const units = ['K', 'M', 'G', 'T'];
-    //     let unitIndex = 0;
-    //     size /= 1024;
-    //     while (size > 1000) {
-    //         size = size / 1000;
-    //         unitIndex++;
-    //     }
-    //     return `${Math.round(size*100)/100} ${units[unitIndex]}B`;
-    // }
+    const parseSize = size => {
+        const units = ['K', 'M', 'G', 'T'];
+        let unitIndex = 0;
+        size /= 1024;
+        while (size > 1000) {
+            size = size / 1000;
+            unitIndex++;
+        }
+        return `${Math.round(size*100)/100} ${units[unitIndex]}B`;
+    }
 
     return (
         <div className="App">
@@ -85,11 +85,12 @@ function App() {
                     <ul className="file-list">
                         {files.map(file =>
                             <li key={file.name + file.size}>
-                                <div className="left">{file.name}</div>
-                                <div className="right" onClick={() => removeFile(file)}>{trashIcon()}</div>
+                                <div className="left">{file.name}<b style={{marginLeft: "10px"}}>({parseSize(file.size)})</b></div>
+                                <div className="float-button" bg="red" onClick={() => removeFile(file)}>{trashIcon()}</div>
                             </li>
                         )}
                     </ul>
+                    <div className="flat-button" color="blue">Upload</div>
                 </section>
             </main>
         </div>
