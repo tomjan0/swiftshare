@@ -20,8 +20,8 @@ function StyledDropzone(props) {
         getRootProps,
         getInputProps,
         isDragActive,
-        isDragAccept,
-        isDragReject
+        // isDragAccept,
+        // isDragReject
     } = useDropzone({onDrop});
 
     return (
@@ -60,16 +60,16 @@ function App() {
         )
     }
 
-    const parseSize = size => {
-        const units = ['K', 'M', 'G', 'T'];
-        let unitIndex = 0;
-        size /= 1024;
-        while (size > 1000) {
-            size = size / 1000;
-            unitIndex++;
-        }
-        return `${Math.round(size*100)/100} ${units[unitIndex]}B`;
-    }
+    // const parseSize = size => {
+    //     const units = ['K', 'M', 'G', 'T'];
+    //     let unitIndex = 0;
+    //     size /= 1024;
+    //     while (size > 1000) {
+    //         size = size / 1000;
+    //         unitIndex++;
+    //     }
+    //     return `${Math.round(size*100)/100} ${units[unitIndex]}B`;
+    // }
 
     return (
         <div className="App">
