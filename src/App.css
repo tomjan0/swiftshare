@@ -16,6 +16,10 @@
     --red-400: #fc8181;
     --red-500: #f56565;
 
+    --green-300: #9AE6B4;
+    --green-400: #68D391;
+    --green-500: #48BB78;
+
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -120,8 +124,23 @@
     flex-grow: 1;
     word-break: break-all;
     justify-content: flex-start;
-    background-color: white;
+    transition: all .2s;
+    position: relative;
+    z-index: 1;
 }
+
+.file-list > li > .left:after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    content: "";
+    height: 100%;
+    z-index: -1;
+    border-radius: 6px;
+    transition: width .1s linear;
+    background-color: var(--blue-300);
+}
+
 
 
 .float-button {
@@ -162,6 +181,15 @@
     background-color: var(--blue-400);
 }
 
+.float-button[bg=green] {
+    background-color: var(--green-500);
+
+}
+
+.float-button[bg=green]:hover {
+    background-color: var(--green-400);
+}
+
 .float-button[bg] {
     color: white;
 }
@@ -184,5 +212,13 @@
     color: var(--blue-500);
     border-color: var(--blue-500);
 
+}
+
+.percent-progress {
+    color: var(--blue-300);
+    margin-left: 1em;
+    width: 3em;
+    align-self: center;
+    text-align: center;
 }
 

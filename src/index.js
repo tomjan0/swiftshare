@@ -3,6 +3,20 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import firebase from "firebase";
+
+// Use your config values here.
+firebase.initializeApp({
+    apiKey: "AIzaSyDdnODn84v5MDCgbvRinvnHYHaVaEtCaRY",
+    authDomain: "swiftshare-df351.firebaseapp.com",
+    databaseURL: "https://swiftshare-df351.firebaseio.com",
+    projectId: "swiftshare-df351",
+    storageBucket: "swiftshare-df351.appspot.com",
+    messagingSenderId: "939926637113",
+    appId: "1:939926637113:web:21c5068b74ba5228dc5be8",
+    measurementId: "G-VMTLT0R5P2"
+});
+
 
 ReactDOM.render(
   <React.StrictMode>
