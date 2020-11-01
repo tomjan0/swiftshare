@@ -50,7 +50,9 @@ function App() {
     });
     let uid;
     auth.onAuthStateChanged(user => {
-        uid = user.uid;
+        if (user) {
+            uid = user.uid;
+        }
     })
 
     const removeFile = file => {
@@ -72,14 +74,34 @@ function App() {
         )
     }
 
-    const clipboardIcon = () => {
+    // const clipboardIcon = () => {
+    //     return (
+    //         <svg width="1em" height="1em" viewBox="0 0 16 16" className="bi bi-clipboard" fill="currentColor"
+    //              xmlns="http://www.w3.org/2000/svg">
+    //             <path fillRule="evenodd"
+    //                   d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+    //             <path fillRule="evenodd"
+    //                   d="M9.5 1h-3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+    //         </svg>
+    //     )
+    // }
+
+    const copyIcon = () => {
         return (
-            <svg width="1em" height="1em" viewBox="0 0 16 16" className="bi bi-clipboard" fill="currentColor"
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="1em" height="1em">
+                <path d="M0 0h24v24H0V0z" fill="none"/>
+                <path
+                    d="M15 1H4c-1.1 0-2 .9-2 2v13c0 .55.45 1 1 1s1-.45 1-1V4c0-.55.45-1 1-1h10c.55 0 1-.45 1-1s-.45-1-1-1zm4 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-1 16H9c-.55 0-1-.45-1-1V8c0-.55.45-1 1-1h9c.55 0 1 .45 1 1v12c0 .55-.45 1-1 1z"/>
+            </svg>
+        )
+    }
+
+    const checkIcon = () => {
+        return (
+            <svg width="1em" height="1em" viewBox="0 0 16 16" className="bi bi-check" fill="currentColor"
                  xmlns="http://www.w3.org/2000/svg">
                 <path fillRule="evenodd"
-                      d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
-                <path fillRule="evenodd"
-                      d="M9.5 1h-3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+                      d="M10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.236.236 0 0 1 .02-.022z"/>
             </svg>
         )
     }
@@ -95,9 +117,11 @@ function App() {
         return `${Math.round(size * 100) / 100} ${units[unitIndex]}B`;
     }
 
-    const [progresses, setProgresess] = useState({});
+    const [progresses, setProgresses] = useState({});
     const [urls, setUrls] = useState({});
     const [uploads, setUploads] = useState(0);
+    const [showToast, setShowToast] = useState(false);
+    const [toastTimeout, setToastTimeout] = useState(undefined);
 
     const uploadFiles = toUpload => {
         if (!toUpload || toUpload.length === 0 || uploads > 0) {
@@ -112,7 +136,7 @@ function App() {
                 const uploadTask = fileRef.put(file);
                 uploadTask.on('state_changed', snapshot => {
                     const progress = Math.round(snapshot.bytesTransferred * 100 / snapshot.totalBytes);
-                    setProgresess(last => {
+                    setProgresses(last => {
                         let next = {...last};
                         next[file.name] = progress;
                         return next;
@@ -133,8 +157,8 @@ function App() {
         }
     }
 
-    const copyToClipboard = url => {
-        console.log('copy', url);
+    const copyToClipboard = filename => {
+        const url = urls[filename];
         const textField = document.createElement('textarea')
         textField.innerText = url;
         document.body.appendChild(textField);
@@ -142,6 +166,15 @@ function App() {
         textField.setSelectionRange(0, 99999)
         document.execCommand('copy');
         textField.remove();
+        setShowToast(true);
+        setToastTimeout(prev => {
+            if (prev) {
+                clearTimeout(prev);
+            }
+            return setTimeout(() => {
+                setShowToast(false);
+            }, 1000)
+        })
     }
 
     const parsProgress = progress => {
@@ -173,15 +206,21 @@ function App() {
                                     : !urls[file.name]
                                         ? <div className="percent-progress">{progresses[file.name]}%</div>
                                         : <div className="float-button" bg="green"
-                                               onClick={() => copyToClipboard(urls[file.name])}>{clipboardIcon()}</div>
+                                               onClick={() => copyToClipboard(file.name)}>{copyIcon()}</div>
                                 }
                             </li>
                         )}
                     </ul>
                     <div className="flat-button" color="blue"
-                         onClick={() => uploadFiles(files)}>{uploads > 0 ? 'Uploading' : 'Upload'}</div>
+                         onClick={() => uploadFiles(files)}>{uploads > 0 ? 'Udostępnianie...' : 'Udostępnij'}</div>
                 </section>
             </main>
+            <aside className={`toast ${showToast ? 'show' : ''}`}>
+                Skopiowano
+            </aside>
+            <aside className={`toast top ${showToast ? 'show' : ''}`}>
+                Skopiowano
+            </aside>
         </div>
     );
 }
