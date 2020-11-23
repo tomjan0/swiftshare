@@ -3,7 +3,11 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import firebase from "firebase";
+import firebase from "firebase/app";
+import "firebase/analytics";
+import "firebase/storage";
+import "firebase/auth";
+import "firebase/functions"
 
 // Use your config values here.
 firebase.initializeApp({
