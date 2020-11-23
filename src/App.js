@@ -17,6 +17,7 @@ function StyledDropzone(props) {
             }
         }
         setFiles([...files]);
+        console.log(files.map(file => file.type));
     }, [props.files, props.setFiles])
 
     const {
@@ -43,8 +44,10 @@ function StyledDropzone(props) {
 
 function App() {
     const [files, setFiles] = useState([]);
+    const functions = firebase.app().functions('europe-west3')
     const storage = firebase.storage();
     const auth = firebase.auth();
+    // const functions = firebase.functions();
     auth.signInAnonymously().catch(function (error) {
         // Handle Errors here.
         // var errorCode = error.code;
@@ -74,34 +77,42 @@ function App() {
         if (!toUpload || toUpload.length === 0 || uploads > 0) {
             return;
         }
-        const storageRef = storage.ref();
+
         for (let file of toUpload) {
             if (!(progresses[file.name] === 100 || urls[file.name])) {
-                setUploads(last => last + 1);
-                const fileRef = storageRef.child(`uploads/${uid}/${file.name}`);
-                console.log(file);
-                const uploadTask = fileRef.put(file);
-                uploadTask.on('state_changed', snapshot => {
-                    const progress = Math.round(snapshot.bytesTransferred * 100 / snapshot.totalBytes);
-                    setProgresses(last => {
-                        let next = {...last};
-                        next[file.name] = progress;
-                        return next;
-                    });
-                }, function (error) {
-                    console.log(error);
-                }, function () {
-                    uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
-                        setUrls(last => {
-                            const next = {...last};
-                            next[file.name] = downloadURL;
-                            return next;
-                        });
-                        setUploads(last => last - 1);
-                    });
-                });
+                uploadFile(file)
             }
         }
+    }
+
+    const uploadFile = async file => {
+        setUploads(last => last + 1);
+        const storageRef = storage.ref();
+        const fileRef = storageRef.child(`uploads/${uid}/${file.name}`);
+        // console.log(file);
+        const uploadTask = fileRef.put(file);
+        uploadTask.on('state_changed', snapshot => {
+            const progress = Math.round(snapshot.bytesTransferred * 100 / snapshot.totalBytes);
+            setProgresses(last => {
+                let next = {...last};
+                next[file.name] = progress;
+                return next;
+            });
+        }, error => {
+            console.log(error);
+        }, () => {
+            uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
+                setUrls(last => {
+                    const next = {...last};
+                    next[file.name] = downloadURL;
+                    return next;
+                });
+                // const temp = {};
+                // temp[file.name] = downloadURL;
+                // setUrls({temp});
+                setUploads(last => last - 1);
+            });
+        });
     }
 
     const copyToClipboard = filename => {
@@ -124,6 +135,25 @@ function App() {
         })
     }
 
+    const speechRecognition = async (name, type) => {
+        // console.log('SPEECH RECOGNITION');
+        const t = type === 'audio/wav' ? 'wav' : 'mp3';
+        console.log(t);
+        try {
+            const callable = functions.httpsCallable('speechToText', {timeout: 540000});
+            const response = await callable({path: `uploads/${uid}/${name}`, type: t})
+            const recognition = JSON.parse(response.data)
+            const blob = new Blob([`Average confidence: ${recognition.avgConfidence}\nTranscription:\n${recognition.transcription}`],
+                {type: "text/plain;charset=utf-8"});
+            const dummyLink = document.createElement('a');
+            dummyLink.href = URL.createObjectURL(blob);
+            dummyLink.download = `${name.split('.')[0]}_transcription.txt`;
+            dummyLink.click();
+        } catch (e) {
+            throw e;
+        }
+    }
+
     return (
         <div className="App">
             <header className="App-header">
@@ -137,13 +167,16 @@ function App() {
                     <StyledDropzone files={files} setFiles={setFiles}/>
                     <ul className="file-list">
                         {files.map(file =>
-                                <FilePosition key={file.name + file.size} file={file} progress={progresses[file.name]}
-                                              url={urls[file.name]}
-                                              removeFile={removeFile} copyToClipboard={copyToClipboard}/>
+                            <FilePosition key={file.name + file.size} file={file} progress={progresses[file.name]}
+                                          url={urls[file.name]} speechRecognition={speechRecognition}
+                                          removeFile={removeFile} copyToClipboard={copyToClipboard}/>
                         )}
                     </ul>
-                    <div className="flat-button" color="blue"
+                    <div className="flat-button"
                          onClick={() => uploadFiles(files)}>{uploads > 0 ? 'Udostępnianie...' : 'Udostępnij'}</div>
+                    {/*<div className="flat-button"*/}
+                    {/*     onClick={bypass}>BYPASS*/}
+                    {/*</div>*/}
                 </section>
             </main>
             <aside className={`toast ${showToast ? 'show' : ''}`}>

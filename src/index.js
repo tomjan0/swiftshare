@@ -7,6 +7,7 @@ import firebase from "firebase/app";
 import "firebase/analytics";
 import "firebase/storage";
 import "firebase/auth";
+import "firebase/functions"
 
 // Use your config values here.
 firebase.initializeApp({
