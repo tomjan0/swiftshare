@@ -27,7 +27,6 @@ export default class FilePosition extends React.Component {
                 await this.props.speechRecognition(this.props.file.name, this.props.file.type);
                 this.setState({recognitionStatus: 'finished', popupMessage: 'Zapisano transkrypcję.'});
             } catch (e) {
-                console.log(e);
                 this.setState({recognitionStatus: 'failed', popupMessage: e.message});
             }
         }

@@ -92,7 +92,7 @@ function App() {
                 return next;
             });
         }, error => {
-            console.log(error);
+            console.error(error);
         }, () => {
             uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
                 setUrls(last => {
