@@ -17,15 +17,12 @@ function StyledDropzone(props) {
             }
         }
         setFiles([...files]);
-        console.log(files.map(file => file.type));
     }, [props.files, props.setFiles])
 
     const {
         getRootProps,
         getInputProps,
         isDragActive,
-        // isDragAccept,
-        // isDragReject
     } = useDropzone({onDrop});
 
     return (
@@ -35,9 +32,6 @@ function StyledDropzone(props) {
                 {!isDragActive ? <p>Przeciągnij tutaj swoje pliki <br/> lub <br/> kliknij, by je wybrać</p> :
                     <p>Upuść teraz</p>}
             </div>
-            {/*{files.map(file =>*/}
-            {/*    <li>{file.name}</li>*/}
-            {/*)}*/}
         </div>
     );
 }
@@ -89,7 +83,6 @@ function App() {
         setUploads(last => last + 1);
         const storageRef = storage.ref();
         const fileRef = storageRef.child(`uploads/${uid}/${file.name}`);
-        // console.log(file);
         const uploadTask = fileRef.put(file);
         uploadTask.on('state_changed', snapshot => {
             const progress = Math.round(snapshot.bytesTransferred * 100 / snapshot.totalBytes);
@@ -136,21 +129,24 @@ function App() {
     }
 
     const speechRecognition = async (name, type) => {
-        // console.log('SPEECH RECOGNITION');
-        const t = type === 'audio/wav' ? 'wav' : 'mp3';
-        console.log(t);
-        try {
-            const callable = functions.httpsCallable('speechToText', {timeout: 540000});
-            const response = await callable({path: `uploads/${uid}/${name}`, type: t})
-            const recognition = JSON.parse(response.data)
-            const blob = new Blob([`Average confidence: ${recognition.avgConfidence}\nTranscription:\n${recognition.transcription}`],
+        const t = type === 'audio/wav'
+            ? 'wav'
+            : type === 'audio/mpeg'
+                ? 'mp3'
+                : undefined;
+        const callable = functions.httpsCallable('speechToText');
+        const {data} = await callable({path: `uploads/${uid}/${name}`, type: t})
+        if (data.status === 'OK') {
+            const blob = new Blob([`Średnia pewność transkrypcji: ${data.avgConfidence}\nTranskrypcja:\n${data.transcription}`],
                 {type: "text/plain;charset=utf-8"});
             const dummyLink = document.createElement('a');
             dummyLink.href = URL.createObjectURL(blob);
             dummyLink.download = `${name.split('.')[0]}_transcription.txt`;
             dummyLink.click();
-        } catch (e) {
-            throw e;
+        } else if (data.status === 'ERROR') {
+            throw Error(data.message);
+        } else {
+            throw Error('Unknown error.')
         }
     }
 
@@ -174,9 +170,6 @@ function App() {
                     </ul>
                     <div className="flat-button"
                          onClick={() => uploadFiles(files)}>{uploads > 0 ? 'Udostępnianie...' : 'Udostępnij'}</div>
-                    {/*<div className="flat-button"*/}
-                    {/*     onClick={bypass}>BYPASS*/}
-                    {/*</div>*/}
                 </section>
             </main>
             <aside className={`toast ${showToast ? 'show' : ''}`}>
