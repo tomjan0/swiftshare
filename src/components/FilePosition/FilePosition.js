@@ -77,7 +77,7 @@ export default class FilePosition extends React.Component {
     }
 
     get isProperAudio() {
-        return this.props.file.type === 'audio/wav' || this.props.file.type === 'audio/mpeg';
+        return ['audio/wav', 'audio/mpeg', 'audio/flac'].includes(this.props.file.type);
     }
 
     render() {
