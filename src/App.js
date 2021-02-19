@@ -100,9 +100,6 @@ function App() {
                     next[file.name] = downloadURL;
                     return next;
                 });
-                // const temp = {};
-                // temp[file.name] = downloadURL;
-                // setUrls({temp});
                 setUploads(last => last - 1);
             });
         });
@@ -129,12 +126,10 @@ function App() {
     }
 
     const speechRecognition = async (name, type) => {
-        const t = type === 'audio/wav'
-            ? 'wav'
-            : type === 'audio/mpeg'
-                ? 'mp3'
-                : undefined;
-        const callable = functions.httpsCallable('speechToText');
+        const t = type === 'audio/mpeg'
+            ? 'mp3'
+            : type.split('/')[1];
+        const callable = functions.httpsCallable('speechToText', {timeout: 540000});
         const {data} = await callable({path: `uploads/${uid}/${name}`, type: t})
         if (data.status === 'OK') {
             const blob = new Blob([`Średnia pewność transkrypcji: ${data.avgConfidence}\nTranskrypcja:\n${data.transcription}`],
