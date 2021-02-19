@@ -1,13 +1,14 @@
 import React from 'react';
 import "./FilePosition.css";
-import {CheckIcon, CopyIcon, DocumentTextIcon, TrashIcon, XIcon} from "../../shared/icons";
+import {CheckIcon, CopyIcon, DocumentTextIcon, TrashIcon, XCircleIcon} from "../../shared/icons";
 import Spinner from "../../shared/spinner";
 
 export default class FilePosition extends React.Component {
     constructor() {
         super();
         this.state = {
-            recognitionStatus: 'not-started'
+            recognitionStatus: 'not-started',
+            popupMessage: 'Wypróbuj automatyczną transkrypcję!'
         }
     }
 
@@ -24,11 +25,10 @@ export default class FilePosition extends React.Component {
             this.setState({recognitionStatus: 'in-progress'});
             try {
                 await this.props.speechRecognition(this.props.file.name, this.props.file.type);
-                this.setState({recognitionStatus: 'finished'});
+                this.setState({recognitionStatus: 'finished', popupMessage: 'Zapisano transkrypcję.'});
             } catch (e) {
-                this.setState({recognitionStatus: 'failed'});
+                this.setState({recognitionStatus: 'failed', popupMessage: e.message});
             }
-
         }
     }
 
@@ -69,14 +69,14 @@ export default class FilePosition extends React.Component {
             case 'finished':
                 return <CheckIcon/>;
             case 'failed':
-                return <XIcon/>
+                return <XCircleIcon/>
             default:
                 return <DocumentTextIcon/>;
         }
     }
 
-    get isAudio() {
-        return this.props.file.type.split('/')[0] === 'audio';
+    get isProperAudio() {
+        return ['audio/wav', 'audio/mpeg', 'audio/flac'].includes(this.props.file.type);
     }
 
     render() {
@@ -85,11 +85,16 @@ export default class FilePosition extends React.Component {
                 <div className="left" style={this.progressStyle}>{this.props.file.name}
                     <b style={{marginLeft: "10px"}}>({this.formattedSize})</b>
                 </div>
-                {this.isAudio && this.completed &&
+                {this.isProperAudio && this.completed &&
                 <div
-                    className={`float-button ${this.completed ? this.state.recognitionStatus === 'failed' ? 'error' : 'feature' : ''}`}
+                    className={'float-button'}
                     bg={this.state.recognitionStatus === 'failed' ? 'red' : 'blue'}
-                    onClick={this.speechRecognition}>{this.recognitionIcon}</div>
+                    onClick={this.speechRecognition}>{this.recognitionIcon}
+                    {this.state.recognitionStatus !== 'in-progress' &&
+                    <div
+                        className={`popup ${this.state.recognitionStatus === 'failed' ? 'error' : 'info'}`}>{this.state.popupMessage}</div>
+                    }
+                </div>
                 }
                 {!this.inProgress
                     ? <div className="float-button" bg="red"

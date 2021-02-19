@@ -1,8 +1,8 @@
-.float-button.feature {
+.float-button {
     position: relative;
 }
 
-.float-button.feature:before, .float-button.error:before {
+.popup {
     width: 200%;
     padding: 1em;
     border-radius: 6px;
@@ -18,25 +18,18 @@
     text-align: center;
     letter-spacing: .1em;
     z-index: -1;
+    animation: bounce 4s;
 }
 
-.float-button.feature:before {
-    background-color: rgba(66, 153, 225, .9);
-    content: 'Wybróbuj automatyczną transkrypcję';
-    animation: feature-bounce 4s;
-}
-
-.float-button.error:before {
+.popup.error {
     background-color: rgba(245, 101, 101, .9);
-    content: 'Wystąpił błąd';
-    animation: feature-bounce 4s;
 }
 
-.float-button.feature:hover::before {
-    background-color: var(--blue-400);
+.popup.info {
+    background-color: rgba(66, 153, 225, .9);
 }
 
-@keyframes feature-bounce {
+@keyframes bounce {
     0% {
         z-index: 2;
         transform: scale(0);
@@ -54,5 +47,4 @@
         z-index: 2;
         opacity: 0;
     }
-
 }
